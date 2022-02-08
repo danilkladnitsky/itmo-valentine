@@ -1,0 +1,59 @@
+version: '3.8'
+services:
+  rest:
+    build:
+      dockerfile: Dockerfile
+      context: valentine-rest-service
+      target: development
+    volumes:
+      - .:/rest
+      - /rest/node_modules
+    command: npm run start:dev
+    depends_on:
+      - postgres
+    environment:
+      DATABASE_URL: ${DB_URL}
+      NODE_ENV: development
+      PORT: 3000
+    ports:
+      - 8080:3000
+    restart: always
+
+  auth:
+    build:
+      dockerfile: Dockerfile
+      context: ./valentine-auth-service
+      target: development
+    volumes:
+      - .:/auth
+      - ./auth/node_modules
+    command: npm run start:dev
+    depends_on:
+      - postgres
+    environment:
+      DATABASE_URL: ${DB_URL}
+      NODE_ENV: development
+      PORT: 3000
+    ports:
+      - 8040:3000
+    restart: always
+
+  postgres:
+    image: postgres:10.4
+    environment:
+      POSTGRES_USER: ${PG_USER}
+      POSTGRES_PASSWORD: ${PG_PASSWORD}
+      POSTGRES_DB: ${PG_DB}
+      POSTGRES_HOST: postgres
+    ports:
+      - 5432:5432
+
+  # pg_admin:
+  #   image: dpage/pgadmin4:4.28
+  #   depends_on:
+  #     - postgres
+  #   environment:
+  #     PGADMIN_DEFAULT_EMAIL: ${PG_ADMIN_EMAIL}
+  #     PGADMIN_DEFAULT_PASSWORD: ${PG_ADMIN_PASSWORD}
+  #   ports:
+  #     - 5440:80
