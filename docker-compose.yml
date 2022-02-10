@@ -11,13 +11,17 @@ services:
     command: npm run start:dev
     depends_on:
       - postgres
+      - rabbit
     environment:
       NODE_ENV: development
       PORT: 3000
       DATABASE_URL: ${DB_URL}
+      RMQ_LINK: ${RMQ_LINK}
     ports:
       - 8080:3000
     restart: always
+    networks:
+      - itmo_net
 
   auth:
     build:
@@ -30,6 +34,7 @@ services:
     command: npm run start:dev
     depends_on:
       - postgres
+      - rabbit
     environment:
       PORT: 3000
       NODE_ENV: development
@@ -39,9 +44,12 @@ services:
       CLIENT_SECRET: ${CLIENT_SECRET}
       GRANT_TYPE: ${GRANT_TYPE}
       REDIRECT_URI: ${REDIRECT_URI}
+      RMQ_LINK: ${RMQ_LINK}
     ports:
       - 8040:3000
     restart: always
+    networks:
+      - itmo_net
 
   postgres:
     image: postgres:10.4
@@ -53,6 +61,8 @@ services:
     ports:
       - 5432:5432
     restart: unless-stopped
+    networks:
+      - itmo_net
 
   pg_admin:
     image: dpage/pgadmin4:4.28
@@ -64,3 +74,22 @@ services:
     ports:
       - 5440:80
     restart: unless-stopped
+    networks:
+      - itmo_net
+
+  rabbit:
+    container_name: 'rabbitmq'
+    image: rabbitmq:management-alpine
+    environment:
+      RABBITMQ_DEFAULT_USER: user
+      RABBITMQ_DEFAULT_PASS: password
+    ports:
+      - '15672:15672'
+      - '5672:5672'
+    tty: true
+    networks:
+      - itmo_net
+
+networks:
+  itmo_net:
+    driver: bridge
