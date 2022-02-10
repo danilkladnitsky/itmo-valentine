@@ -52,6 +52,7 @@ services:
       POSTGRES_HOST: postgres
     ports:
       - 5432:5432
+    restart: unless-stopped
 
   pg_admin:
     image: dpage/pgadmin4:4.28
@@ -62,3 +63,4 @@ services:
       PGADMIN_DEFAULT_PASSWORD: ${PG_ADMIN_PASSWORD}
     ports:
       - 5440:80
+    restart: unless-stopped
