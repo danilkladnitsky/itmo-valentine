@@ -6,15 +6,15 @@ services:
       context: valentine-rest-service
       target: development
     volumes:
-      - .:/rest
-      - /rest/node_modules
+      - ./valentine-rest-service:/usr/src/rest
+      - ./valentine-rest-service/node_modules:/usr/src/rest/node_modules
     command: npm run start:dev
     depends_on:
       - postgres
     environment:
-      DATABASE_URL: ${DB_URL}
       NODE_ENV: development
       PORT: 3000
+      DATABASE_URL: ${DB_URL}
     ports:
       - 8080:3000
     restart: always
@@ -25,15 +25,20 @@ services:
       context: ./valentine-auth-service
       target: development
     volumes:
-      - .:/auth
-      - ./auth/node_modules
+      - ./valentine-auth-service:/usr/src/auth
+      - ./valentine-auth-service/node_modules:/usr/src/auth/node_modules
     command: npm run start:dev
     depends_on:
       - postgres
     environment:
-      DATABASE_URL: ${DB_URL}
-      NODE_ENV: development
       PORT: 3000
+      NODE_ENV: development
+      DATABASE_URL: ${DB_URL}
+      AUTH_LINK: ${AUTH_LINK}
+      CLIENT_ID: ${CLIENT_ID}
+      CLIENT_SECRET: ${CLIENT_SECRET}
+      GRANT_TYPE: ${GRANT_TYPE}
+      REDIRECT_URI: ${REDIRECT_URI}
     ports:
       - 8040:3000
     restart: always
