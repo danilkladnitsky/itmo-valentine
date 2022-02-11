@@ -4,3 +4,6 @@
 [submodule "valentine-rest-service"]
 	path = valentine-rest-service
 	url = git@github.com:danyaisyourhomie/valentine-rest-service.git
+[submodule "valentine-frontend-service"]
+	path = valentine-frontend-service
+	url = git@github.com:danyaisyourhomie/valentine-frontend-service.git
